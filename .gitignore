@@ -1,1 +1,4 @@
 *.sw?
+.sitegen_cache
+luarocks/
+
