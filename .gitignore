@@ -1,4 +1,4 @@
 *.sw?
 .sitegen_cache
 luarocks/
-
+activate.sh
