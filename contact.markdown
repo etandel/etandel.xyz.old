@@ -6,5 +6,5 @@ title: Contact
 * [Linkedin](https://www.linkedin.com/in/etandel)
 * [Github](https://github.com/etandel)
 * [Keybase](https://keybase.io/etandel)
-* [GarimpoFM](Garimpo FM)
+* [GarimpoFM](https://garimpofm.wordpress.com/)
 
