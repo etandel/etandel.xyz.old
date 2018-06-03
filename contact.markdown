@@ -2,5 +2,9 @@
 title: Contact
 ---
 
-I live in a small hut in the mountains of Kumano Kodō on Kii Hantō and would not
-like to be contacted.
+* [\@etandel](https://twitter.com/etandel)
+* [Linkedin](https://www.linkedin.com/in/etandel)
+* [Github](https://github.com/etandel)
+* [Keybase](https://keybase.io/etandel)
+* [GarimpoFM](Garimpo FM)
+
