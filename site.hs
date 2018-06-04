@@ -50,6 +50,9 @@ main = hakyll $ do
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Home"                `mappend`
+                    (if length posts > 0
+                     then (constField "hasPosts" "")
+                     else mempty) `mappend`
                     defaultContext
 
             getResourceBody
