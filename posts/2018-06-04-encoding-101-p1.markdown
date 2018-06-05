@@ -1,0 +1,25 @@
+---
+title: Encoding 101 (1/3) - O que é encoding
+---
+
+
+Imagine que você está tentando explicar para seu professor que seu cachorro comeu o trabalho e que por isso você só vai poder entregá-lo amanhã. Como você comunica esse fato para ele?
+
+Primeiro, você tem que materializar essa ideia em alguma linguagem; depois você tem que transmitir essa ideia materializada usando sons ou sinais; e aí seu professor precisa interpretar esses sons ou sinais de volta para a linguagem e então, com sorte, interpretar isso para a mesma ideia que você tentou transmitir.
+
+Uma forma de ver esse processo todo é que nos dois primeiros passos você codificou sua ideia em algo que pudesse ser transmitido, enquanto que nos dois seguintes seu professor decodificou de volta a transmição para a ideia original.
+
+<img src="/images/encoding.jpg" alt="Desenho de duas pessoas se comunicando" width=500 heigh=500></img>
+
+Da mesma forma, se você precisa se comunicar com alguém que está longe, ou no futuro, você pode codificar suas ideias usando rabiscos num papel, entalhes numa pedra ou uma das outras milhares de formas de se escrever texto.
+
+Mas se você quiser materializar suas ideias num computador, você precisará usar... _encoding_!
+
+Como o computador só trabalha com números [1], pra gravar uma informação no computador essa informação precisa ser transformada em números. Encoding então nada mais é que uma tabela que associa caracteres de texto a números. Por exemplo, vamos criar um encoding:
+
+
+|     |     |     |     |     |     |     |     |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A   | B   | C   | D   | ... | X   | Y   | Z   |
+| 1   | 2   | 3   | 4   | ... | 24  | 25  | 26  |
+
