@@ -39,6 +39,10 @@ h2 {
   font-size: 2rem;
 }
 
+article {
+  text-align: justify;
+}
+
 article .header {
   font-size: 1.4rem;
   font-style: italic;
