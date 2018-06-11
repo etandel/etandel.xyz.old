@@ -35,7 +35,6 @@ main = hakyll $ do
             let archiveCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Blog"                `mappend`
-                    constField "hasPosts" ""                 `mappend`
                     defaultContext
 
             makeItem ""
@@ -51,9 +50,6 @@ main = hakyll $ do
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Elias Tandel Barrionovo" `mappend`
-                    (if length posts > 0
-                     then (constField "hasPosts" "")
-                     else mempty) `mappend`
                     defaultContext
 
             getResourceBody
