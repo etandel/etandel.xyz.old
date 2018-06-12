@@ -113,5 +113,5 @@ Essa solução também funciona, e tem a vantagem de explicitar na definição q
 
 No caso da Onyo usamos a segunda opção simplesmente porque eu desconhecia a primeira na época. Mesmo assim, conseguimos aplicar essa solução e resolver o problema. A causa? Uma certa funcionalidade esquecida executava uma requisição de DELETE em nossa API RESTful, fazendo com que o [Django Rest Framework](http://www.django-rest-framework.org/) prontamente deletasse o recurso no banco.
 
-Eu não recomendo usar triggers ou rules para implementar regras de negócio, pois misturar a lógica entre código e banco pode dificultar bastante a manutenção da aplicação, por motivos que que fogem ao escopo desse post. No entanto, essas ferramentas podem ser a última barreira para proteger a integridade dos seus dados e ainda funcionam como uma ótima forma de [debug de guerrilha](https://www.youtube.com/watch?v=bAcfPzxB3dk).
+Eu não recomendo usar triggers ou rules para implementar regras de negócio, pois misturar a lógica entre código e banco pode dificultar bastante a manutenção da aplicação, por motivos que fogem ao escopo desse post. No entanto, essas ferramentas podem ser a última barreira para proteger a integridade dos seus dados e ainda funcionam como uma ótima forma de [debug de guerrilha](https://www.youtube.com/watch?v=bAcfPzxB3dk).
 
