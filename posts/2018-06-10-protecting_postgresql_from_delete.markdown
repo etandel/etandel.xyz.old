@@ -1,5 +1,11 @@
 ---
 title: Impedindo deleções em uma tabela no Postgres
+
+header-includes: |
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@etandel" />
+    <meta name="twitter:title" content="Impedindo deleções em uma tabela no Postgres" />
+    <meta name="twitter:description" content="Suponha que alguns dados estão sumindo do seu banco, e aparentemente..." />
 ---
 
 
