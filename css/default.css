@@ -4,11 +4,13 @@ html {
 
 body {
   font-size: 1.6rem;
-  color: #000;
+  color: #444;
+  background-color: #eee;
+  line-height: 1.4;
 }
 
 header {
-  border-bottom: 0.2rem solid #000;
+  border-bottom: 0.2rem solid #444;
 }
 
 nav {
@@ -18,7 +20,7 @@ nav {
 nav a {
   font-size: 1.8rem;
   font-weight: bold;
-  color: black;
+  color: #444;
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -26,7 +28,7 @@ nav a {
 footer {
   margin-top: 3rem;
   padding: 1.2rem 0;
-  border-top: 0.2rem solid #000;
+  border-top: 0.2rem solid #444;
   font-size: 1.2rem;
   color: #555;
 }
@@ -51,7 +53,7 @@ article .header {
 
 .logo a {
   font-weight: bold;
-  color: #000;
+  color: #444;
   text-decoration: none;
 }
 
