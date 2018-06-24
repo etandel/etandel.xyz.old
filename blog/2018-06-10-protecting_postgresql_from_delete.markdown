@@ -20,7 +20,7 @@ Como não sabíamos qual a origem do problema, só poderíamos resolver isso a n
 Gatilhos ou triggers permitem atrelar certos procedimentos a certos eventos no banco de dados.
 Por exemplo, suponha que você queira salvar um histórico de todas as alterações de preço na sua tabela de produtos. Uma forma de fazer isso é criar uma tabela de histórico e um trigger que faça `INSERT` do histórico sempre que ocorrer um `UPDATE` de produto:
 
-```sql
+``` sqlpostgresql
 CREATE TABLE product (
   id SERIAL PRIMARY KEY,
   price NUMERIC(6, 2) NOT NULL
@@ -50,7 +50,7 @@ CREATE TRIGGER log_product_price_change
 
 Note que definimos não só o tipo do evento, mas também em que momento o trigger deve ser executado. Entre as possiblidades está executar o procedimento *em vez* do evento original. Usando o exemplo acima, poderíamos então evitar deleções de produtos dessa forma:
 
-```sql
+``` sqlpostgresql
 CREATE FUNCTION product_protect_delete() RETURNS trigger as $product_protect_delete$
     BEGIN
         RAISE EXCEPTION 'Nope nope nope';
@@ -78,7 +78,7 @@ Esse erro ocorre porque triggers com `INSTEAD OF` só são permitidos para views
 
 A [documentação do PostgreSQL](https://www.postgresql.org/docs/10/static/plpgsql-trigger.html) diz que triggers que acontecem antes do evento podem retornar `NULL` para sinalizar que as operações seguintes, incluindo o próprio evento e outros triggers, devem ser abortadas. Com isso, podemos manter exatamente a mesma função e mudar apenas a definição do trigger:
 
-```sql
+``` sqlpostgresql
 CREATE FUNCTION product_protect_delete() RETURNS trigger as $product_protect_delete$
     BEGIN
         RAISE EXCEPTION 'Nope nope nope';
@@ -96,7 +96,7 @@ CREATE TRIGGER block_product_deletion
 
 O PostgreSQL também oferece o mecanismo de rules, que são parecidas com triggers, mas bem mais poderosas. Enquanto triggers são chamados *enquanto* a query original já está sendo executada, rules permitem _reescrever_ a query *antes* de ela ser executada. Isso significa que podemos impedir as deleções simplesmente refazendo a query original para lançar um erro:
 
-```sql
+``` sqlpostgresql
 CREATE FUNCTION product_protect_delete() RETURNS int as $product_protect_delete$
     BEGIN
         RAISE EXCEPTION 'Nope nope nope';
