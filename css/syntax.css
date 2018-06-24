@@ -6,17 +6,52 @@ code.sourceCode  {
 td.lineNumbers { border-right: 1px solid #AAAAAA; text-align: right; color: #AAAAAA; padding-right: 5px; padding-left: 5px; }
 td.sourceCode { padding-left: 5px; }
 
-.sourceCode span.kw { color: #007020; font-weight: bold; }
-.sourceCode span.dt { color: #902000; }
-.sourceCode span.dv { color: #40a070; }
-.sourceCode span.bn { color: #40a070; }
-.sourceCode span.fl { color: #40a070; }
-.sourceCode span.ch { color: #4070a0; }
-.sourceCode span.st { color: #4070a0; }
-.sourceCode span.co { color: #60a0b0; font-style: italic; }
-.sourceCode span.ot { color: #007020; }
+/* AlertTok */
 .sourceCode span.al { color: red; font-weight: bold; }
-.sourceCode span.fu { color: #06287e; }
-.sourceCode span.re { }
+/* AnnotationTok */
+/* AttributeTok */
+/* BaseNTok */
+.sourceCode span.bn { color: #40a070; }
+/* BuiltInTok */
+.sourceCode span.bu { color: #06287e; }
+/* CharTok */
+.sourceCode span.ch { color: #4070a0; }
+/* CommentTok */
+.sourceCode span.co { color: #60a0b0; font-style: italic; }
+/* CommentVarTok */
+/* ConstantTok */
+/* ControlFlowTok */
+.sourceCode span.cf { color: #007020; font-weight: bold; }
+/* DataTypeTok */
+.sourceCode span.dt { color: #902000; }
+/* DecValTok */
+.sourceCode span.dv { color: #40a070; }
+/* DocumentationTok */
+/* ErrorTok */
 .sourceCode span.er { color: red; font-weight: bold; }
+/* ExtensionTok */
+/* FloatTok */
+.sourceCode span.fl { color: #40a070; }
+/* FunctionTok */
+.sourceCode span.fu { color: #06287e; }
+/* ImportTok */
+.sourceCode span.im { color: #007020; font-weight: bold; }
+/* InformationTok */
+/* KeywordTok */
+.sourceCode span.kw { color: #007020; font-weight: bold; }
+/* NormalTok */
+/* OperatorTok */
+/* OtherTok */
+.sourceCode span.ot { color: #007020; }
+/* PreprocessorTok */
+/* RegionMarkerTok */
+.sourceCode span.re { }
+/* SpecialCharTok */
+/* SpecialStringTok */
+.sourceCode span.ss { color: #4070a0; }
+/* StringTok */
+.sourceCode span.st { color: #4070a0; }
+/* VariableTok */
+/* VerbatimStringTok */
+/* WarningTok */
 
