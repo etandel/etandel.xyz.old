@@ -157,5 +157,7 @@ pre code {
     display: block;
     padding: 8px;
     margin-bottom: 2em;
+    white-space: pre-wrap;
 }
+
 
