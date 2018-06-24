@@ -29,7 +29,7 @@ import requests
 
 def fetch(url: str) -> str:
     """
-    Executa um GET na url e retorna o conteúdo respondido.
+    Executa um GET na URL e retorna o conteúdo respondido.
     """
     return requests.get(url).content
 ```
@@ -52,7 +52,7 @@ def get_links(content: str) -> List[str]:
 ```
 
 Agora a função que de fato faz a lógica toda. Ela deve receber uma URL inicial e executar o fluxograma acima.
-Para isso vamos precisar de uma fila de URLs a visitar, um conjunto para armazenar as urls já visitadas, e um _loop_ para manter a coisa toda rodando.
+Para isso vamos precisar de uma fila de URLs a visitar, um conjunto para armazenar as URLs já visitadas, e um _loop_ para manter a coisa toda rodando.
 Além disso, como todo algoritmo recursivo, é sempre bom ter uma condição de parada que evite que nosso crawler fique rodando para sempre; para isso, vamos definir uma profundidade máxima para a recursão.
 A nossa fila então vai guardar as próximas URLs a serem visitadas e suas respectivas profundidades, para podermos saber se devemos entrar mais um nível no site ou não.
 
@@ -61,11 +61,11 @@ from queue import Queue  # já vem pronto na linguagem
 
 
 def crawl(seed: str, max_depth: int=3):
-    # urls já visitadas
+    # URLs já visitadas
     visited = set()
 
-    # fila de urls a visitar.
-    # já adicionamos a url original, que tem profundidade 0
+    # fila de URLs a visitar.
+    # já adicionamos a URL original, que tem profundidade 0
     queue = Queue()
     queue.put((0, seed))
 
@@ -88,7 +88,7 @@ def crawl(seed: str, max_depth: int=3):
 
 ```
 
-Note a chamada da função `process_page()`. Como só visitar recursivamente um site não traz nenhum valor, precisamos passar os dados recebidos para alguém fazer algo interessante com isso. Por enquanto, vamos só imprimir na tela a profundidade e a url:
+Note a chamada da função `process_page()`. Como só visitar recursivamente um site não traz nenhum valor, precisamos passar os dados recebidos para alguém fazer algo interessante com isso. Por enquanto, vamos só imprimir na tela a profundidade e a URL:
 
 ``` python
 def process_page(depth: int, url: str, content: str):
@@ -108,10 +108,161 @@ if __name__ == '__main__':
 
 ### Testando
 
-- Testar g1
-- Testar etandel.xyz -> mostrar que links relativos bugam
-- reescrever get_links() com urljoin
-- explicar e consertar erro de TOCTOU no if link not in visited
+
+Vamos testar no G1:
+
+```
+% python crawler.py 2 https://g1.globo.com/
+0 - https://g1.globo.com/
+1 - http://g1.globo.com/economia/agronegocios/
+1 - http://g1.globo.com/blogs-e-colunas/
+1 - http://g1.globo.com/carros/
+1 - http://g1.globo.com/carros/a-z/
+1 - http://g1.globo.com/carros/caminhoes/
+1 - http://g1.globo.com/carros/motos/
+1 - http://g1.globo.com/carros/tabela-fipe/
+1 - http://g1.globo.com/ciencia-e-saude/
+1 - http://g1.globo.com/economia/concursos-e-emprego/
+1 - https://g1.globo.com/e-ou-nao-e/
+1 - http://g1.globo.com/economia/
+1 - http://g1.globo.com/economia/agronegocios/
+1 - http://g1.globo.com/economia/seu-dinheiro/calculadoras/
+1 - http://g1.globo.com/economia/concursos-e-emprego/
+1 - http://g1.globo.com/economia/seu-dinheiro/
+1 - http://g1.globo.com/economia/midia-e-marketing/
+1 - http://g1.globo.com/economia/pme/
+1 - http://g1.globo.com/educacao/
+1 - http://especiais.g1.globo.com/educacao/app-g1-enem/
+...
+```
+
+Eu parei o processamento logo no começo, porque o site do G1 é bem grande, mas parece que está funcionando direitinho, extraindo os links, calculando a profundidade etc.
+Aliás, note como alguns links usam HTTP, enquanto outros HTTPS. Isso é um comportamento bem ruim do G1, pois hoje em dia [não tem mais desculpa](https://letsencrypt.org/) [para não usar HTTPS](https://stormpath.com/blog/why-http-is-sometimes-better-than-https).
+Mas como muitos sites não se comportam direito, você como usuário pode se proteger disso usando a extensão [HTTPS Everywhere](https://www.eff.org/https-everywhere), da Electronic Frontier Foundation, que quando possível força seu browser a usar HTTPS mesmo que o link do site esteja errado.
+
+
+Só para ter certeza, vamos testar nesse site aqui:
+
+```
+% python crawler.py 2 https://etandel.xyz/
+0 - https://etandel.xyz/
+Traceback (most recent call last):
+  [stack trace enorme]
+requests.exceptions.MissingSchema: Invalid URL './': No schema supplied. Perhaps you meant http://./?
+```
+
+Ooops. Parece que o crawler tentou acessar a URL `./`, o que fez dar um erro na Requests. Isso aconteceu porque os links nesse site são caminhos relativos entre as páginas. Isto é, em vez de URLs completas como `https://etandel.xyz/blog/`, os links são na forma `./blog/`, que significa "acesse o caminho `blog/` a partir da página atual. Esse tipo de link é muito comum em sites estáticos como esse aqui, onde em geral uma URL corresponde diretamente a um arquivo no servidor.
+
+Para resolver isso, vamos ter que alterar nossa função `get_links()` para normalizar a URL extraída com base na URL atual. Por sorte o Python já vem com uma função que resolve isso pra gente:
+``` python
+In [1]: from urllib.parse import urljoin
+
+In [2]: urljoin('https://site.com/p1', '/p2')
+Out[2]: 'https://site.com/p2'
+
+In [3]: urljoin('https://site.com/p1', './p2')
+Out[3]: 'https://site.com/p2'
+
+In [4]: urljoin('https://site.com/p1/', './p2')
+Out[4]: 'https://site.com/p1/p2'
+
+In [5]: urljoin('https://site.com/p1/', '/p2')
+Out[5]: 'https://site.com/p2'
+
+In [6]: urljoin('https://site.com/p1/', 'http://outrosite.com/p2')
+Out[6]: 'http://outrosite.com/p2'
+```
+
+Melhorando nossa extração de links:
+
+``` python
+def get_links(url: str, content: str) -> List[str]:
+    """
+    Busca todas as tags <a> em content que possuam a propriedade href,
+    normaliza os hrefs para serem URLs absolutas baseadas na URL dada
+    e então retorna os links em uma lista.
+    """
+    return [urljoin(url, a['href'])
+            for a in BeautifulSoup(content, 'lxml').find_all('a', href=True)]
+```
+
+Não podemos esquecer de trocar a chamada em `crawl()` para passar a URL atual:
+
+``` python
+...
+for link in get_links(url, content):
+    if link not in visited:
+        queue.put((depth + 1, link))
+```
+
+
+Testando de novo:
+
+```
+% python crawler.py 2 https://etandel.xyz/
+0 - https://etandel.xyz/
+1 - https://etandel.xyz/contact.html
+1 - https://etandel.xyz/blog.html
+1 - http://jaspervdj.be/hakyll
+2 - https://etandel.xyz/blog.html
+2 - https://twitter.com/etandel
+2 - https://www.linkedin.com/in/etandel
+2 - https://github.com/etandel
+2 - https://keybase.io/etandel
+2 - https://garimpofm.wordpress.com/
+2 - http://jaspervdj.be/hakyll
+2 - https://etandel.xyz/blog/2018-06-10-protecting_postgresql_from_delete.html
+2 - http://jaspervdj.be/hakyll
+2 - https://github.com/jaspervdj/hakyll
+2 - http://jaspervdj.be/
+2 - http://jaspervdj.be/index.html
+2 - http://jaspervdj.be/tutorials.html
+...
+```
+
+Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem grande e bem conectado: muitos links dele para ele mesmo.
+No entanto, agora nosso crawler logo começou a acessar outros sites.
+Se você é um Google da vida, percorrer a web inteira é exatamente o que você quer, mas em geral quando criamos crawlers estamos apenas interessados em um site ou mesmo só um subconjunto dele.
+Para resolver isso vamos criar uma função que decide se um link deve ser seguido ou não, e nesse caso vamos considerar que devemos seguir um link apenas quando este for do mesmo domínio da URL inicial:
+
+``` python
+from urllib.parse import urlparse
+
+
+def should_visit(seed: str, link: str) -> bool:
+    return urlparse(seed).hostname == urlparse(link).hostname
+```
+
+E fazemos a checagem antes de colocar o link na fila:
+
+``` python
+for link in get_links(url, content):
+    if link not in visited and should_visit(seed, link):
+        queue.put((depth + 1, link))
+```
+
+Além disso, mesmo com a checagem, estamos visitando algumas páginas mais de uma vez.
+Isso porque até a página ser visitada, podemos já ter adicionado ela na fila várias vezes.
+Para evitar esse problema, poderíamos verificar se a URL já não está enfileirada, mas estruturas de filas em geral não são muito eficientes para testes de pertinência (checar se um elemento já está presente). Pra resolver então fazemos a checagem logo antes de visitar a URL e, para não encher a fila desnecessariamente, antes de enfileirar a URL:
+
+``` python
+while not queue.empty():
+    depth, url = queue.get()
+    if url not in visited:
+        visited.add(url)
+```
+
+
+Testando de novo agora, parece que está tudo ok!
+
+```
+% python crawler.py 2 https://etandel.xyz/
+0 - https://etandel.xyz/
+1 - https://etandel.xyz/contact.html
+1 - https://etandel.xyz/blog.html
+2 - https://etandel.xyz/blog.html
+2 - https://etandel.xyz/blog/2018-06-10-protecting_postgresql_from_delete.html
+```
 
 
 ### Arquivo final:
@@ -120,7 +271,7 @@ if __name__ == '__main__':
 import sys
 from queue import Queue
 from typing import List
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 import requests
@@ -128,7 +279,7 @@ import requests
 
 def fetch(url: str) -> str:
     """
-    Executa um GET na url e retorna o conteúdo respondido.
+    Executa um GET na URL e retorna o conteúdo respondido.
     """
     return requests.get(url).content
 
@@ -136,11 +287,15 @@ def fetch(url: str) -> str:
 def get_links(url: str, content: str) -> List[str]:
     """
     Busca todas as tags <a> em content que possuam a propriedade href,
-    normaliza os hrefs para serem URLs absolutas baseadas na url dada
+    normaliza os hrefs para serem URLs absolutas baseadas na URL dada
     e então retorna os links em uma lista.
     """
     return [urljoin(url, a['href'])
             for a in BeautifulSoup(content, 'lxml').find_all('a', href=True)]
+
+
+def should_visit(seed: str, link: str) -> bool:
+    return urlparse(seed).hostname == urlparse(link).hostname
 
 
 def process_page(depth: int, url: str, content: str):
@@ -148,11 +303,11 @@ def process_page(depth: int, url: str, content: str):
 
 
 def crawl(seed: str, max_depth: int=3):
-    # urls já visitadas
+    # URLs já visitadas
     visited = set()
 
-    # fila de urls a visitar.
-    # já adicionamos a url original, que tem profundidade 0
+    # fila de URLs a visitar.
+    # já adicionamos a URL original, que tem profundidade 0
     queue = Queue()
     queue.put((0, seed))
 
@@ -171,7 +326,7 @@ def crawl(seed: str, max_depth: int=3):
             # lembrando de incrementar a profundidade
             if depth < max_depth:
                 for link in get_links(url, content):
-                    if link not in visited:
+                    if link not in visited and should_visit(seed, link):
                         queue.put((depth + 1, link))
 
 
