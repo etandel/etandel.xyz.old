@@ -39,6 +39,10 @@ server {
 		try_files $uri $uri/ =404;
 	}
 
+    location ~ ^/posts/(.*)$ {
+        return 301 https://$host/blog/$1;
+    }
+
    # tioeliastanoov
     location = /tioelias { rewrite ^ /tioelias/; }
     location /tioelias { try_files $uri @tioelias; }
