@@ -1,5 +1,5 @@
 --------
-title: Criando um framework para crawler distribuido em python
+title: Criando um framework para crawler distribuido em python - Parte 1
 --------
 
 ### Introdução
@@ -105,9 +105,7 @@ if __name__ == '__main__':
     crawl(seed, int(max_depth))
 ```
 
-
 ### Testando
-
 
 Vamos testar no G1:
 
@@ -140,7 +138,6 @@ Eu parei o processamento logo no começo, porque o site do G1 é bem grande, mas
 Aliás, note como alguns links usam HTTP, enquanto outros HTTPS. Isso é um comportamento bem ruim do G1, pois hoje em dia [não tem mais desculpa](https://letsencrypt.org/) [para não usar HTTPS](https://stormpath.com/blog/why-http-is-sometimes-better-than-https).
 Mas como muitos sites não se comportam direito, você como usuário pode se proteger disso usando a extensão [HTTPS Everywhere](https://www.eff.org/https-everywhere), da Electronic Frontier Foundation, que quando possível força seu browser a usar HTTPS mesmo que o link do site esteja errado.
 
-
 Só para ter certeza, vamos testar nesse site aqui:
 
 ```
@@ -154,6 +151,7 @@ requests.exceptions.MissingSchema: Invalid URL './': No schema supplied. Perhaps
 Ooops. Parece que o crawler tentou acessar a URL `./`, o que fez dar um erro na Requests. Isso aconteceu porque os links nesse site são caminhos relativos entre as páginas. Isto é, em vez de URLs completas como `https://etandel.xyz/blog/`, os links são na forma `./blog/`, que significa "acesse o caminho `blog/` a partir da página atual". Esse tipo de link é muito comum em sites estáticos como esse aqui, onde em geral uma URL corresponde diretamente a um arquivo no servidor.
 
 Para resolver isso, vamos ter que alterar nossa função `get_links()` para normalizar a URL extraída com base na URL atual. Por sorte o Python já vem com uma função que resolve isso pra gente:
+
 ``` python
 In [1]: from urllib.parse import urljoin
 
@@ -194,7 +192,6 @@ for link in get_links(url, content):
     if link not in visited:
         queue.put((depth + 1, link))
 ```
-
 
 Testando de novo:
 
@@ -263,13 +260,13 @@ Testando de novo agora, parece que está tudo ok!
 2 - https://etandel.xyz/blog/2018-06-10-protecting_postgresql_from_delete.html
 ```
 
-
 ### Conclusão
 
+Crawlers são sistemas conceitualmente simples, mas na prática bem complicados devido à quantidade de coisas que podem dar problema durante o processamento. Nesse post vimos não só o básico de como implementar um sistema desse tipo, mas também como lidar com alguns problemas típicos como HTMLs quebrados, URLs relativas e erros comuns de lógica que podem adicionar comportamentos ruins ao sistema.
 
+No próximo post veremos como melhor a performance e lidar com os erros de rede e protocolo que podem surgir.
 
-
-### Arquivo final:
+### Arquivo completo:
 
 ``` python
 import sys
@@ -338,15 +335,3 @@ if __name__ == '__main__':
     max_depth, seed = sys.argv[1:]
     crawl(seed, int(max_depth))
 ```
-
-### Um processo, uma thread, assíncrono
-
-
-### Distribuido
-### Framework
-### O que mais?
-    -  timeout
-    -  abstrair processamento de erros
-    -  múltiplos fetchers
-    -  múltiplas filas
-
