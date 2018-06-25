@@ -14,12 +14,40 @@ A lógica de um crawler pode ser resumida no diagrama abaixo:
 
 Note que essencialmente um crawler é simples: possui apenas um _loop_ e algumas condições de parada. No entanto, são tantos os problemas que podem ocorrer em qualquer uma dessas etapas que criar e manter um crawler robusto e rápido não é nem um pouco trivial. Por isso, apesar de existirem diversas ferramentas no mercado que abstraem essa tarefa - e para produção você provavelmente deveria usar uma delas em vez de criar outra do zero -, esse artigo visa explicar o passo-a-passo de criar um crawler em Python, iniciando com uma implementação mais ingênua e evoluindo ela para ganhar performance e lidar melhor com dificuldades comuns.
 
+### Web 101
+
+Pra implementar um crawler é preciso primeiro saber como funciona a web. Se você já sabe, pode pular essa seção; se não, essa introdução vai ser importante para entender as próximas.
+
+#### HTTP - Hypertext Transfer Protocol
+
+HTTP é um dos protocolos usado na web, e ele define basicamente como que um _user agent_ (geralmente um browser) e um servidor se comunicam. Nele, o _user agent_ inicia a comunicação fazendo ao servidor uma requisição que contém até 4 partes:
+
+- Um **caminho** (ou _path_), que define qual o recurso deve ser acessado. Geralmente se parece com `/blog/2018-06-20-crawling-in-python.html`.
+- Um **método**, que define o que deve ser feito com o recurso. Os mais comuns são `GET`, que apenas requisita o recurso e `POST`, que é uma das formas de enviar informações para o servidor, muito usado em formulários de cadastro, login etc. No nosso caso, como queremos apenas coletar as páginas, vamos usar somento o `GET`.
+- Possivelmente um **corpo**, que contém as informações que estão sendo enviadas ao servidor (e.g. dados de cadastro, cartão de crédito, login etc. a depender da aplicação), se houver.
+- Vários **cabeçalhos** (ou _headers_), que são uma série de metadados que definem como o servidor deve processar a requisição: quais os formatos aceitos, que tipo de compressão deve ser usada, qual o "nome" do _user agent_ etc.
+
+Recebendo a requisição, o servidor gera uma resposta que contém:
+
+- Um **_status code_**, que é um código numérico que define se deu tudo certo com a requição. São [vários](https://pt.wikipedia.org/wiki/Lista_de_c%C3%B3digos_de_estado_HTTP), sendo os mais comuns:
+    - **200**: ok;
+    - **301**: o recurso mudou de endereço permanentemente;
+    - **403**: o usuário não tem permissão para acessar esse recurso;
+    - **500**: deu ruim no servidor.
+- Mais **cabeçalhos**, dessa vez definindo metadados sobre a resposta;
+- O **corpo** da resposta. No nosso caso, esse corpo será em geral um conteúdo HTML.
+
+
+### HTML
+
+
 ### Versão 1: Um processo, uma thread, síncrono e ingênuo.
 
 Para uma primeira versão, vamos implementar o mínimo necessário para um crawler funcionar e não nos preocupar muito com qualquer problema que possa surgir.
 
-Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links. O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, algumas que até já vem embutidas na própria biblioteca padrão da linguagem; pessoalmente, acho que as mais simples são a [Requests]() para lidar com a camada HTTP e [BeautifulSoup]() para trabalhar com o conteúdo HTML da página.
-
+Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links.
+O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, algumas que até já vem embutidas na própria biblioteca padrão da linguagem, como os módulos [`urllib`](https://docs.python.org/3/library/urllib.html) e [`html.parser`](https://docs.python.org/3/library/html.parser.html#module-html.parser).
+Essa é uma escolha subjetiva, mas eu acho que as mais simples de usar são [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
 
 Primeiro, vamos criar uma função para que visita uma URL e retorna seu conteúdo, sem se preocupar por enquanto com erros que possam acontecer no meio do caminho:
 
