@@ -151,7 +151,7 @@ Traceback (most recent call last):
 requests.exceptions.MissingSchema: Invalid URL './': No schema supplied. Perhaps you meant http://./?
 ```
 
-Ooops. Parece que o crawler tentou acessar a URL `./`, o que fez dar um erro na Requests. Isso aconteceu porque os links nesse site são caminhos relativos entre as páginas. Isto é, em vez de URLs completas como `https://etandel.xyz/blog/`, os links são na forma `./blog/`, que significa "acesse o caminho `blog/` a partir da página atual. Esse tipo de link é muito comum em sites estáticos como esse aqui, onde em geral uma URL corresponde diretamente a um arquivo no servidor.
+Ooops. Parece que o crawler tentou acessar a URL `./`, o que fez dar um erro na Requests. Isso aconteceu porque os links nesse site são caminhos relativos entre as páginas. Isto é, em vez de URLs completas como `https://etandel.xyz/blog/`, os links são na forma `./blog/`, que significa "acesse o caminho `blog/` a partir da página atual". Esse tipo de link é muito comum em sites estáticos como esse aqui, onde em geral uma URL corresponde diretamente a um arquivo no servidor.
 
 Para resolver isso, vamos ter que alterar nossa função `get_links()` para normalizar a URL extraída com base na URL atual. Por sorte o Python já vem com uma função que resolve isso pra gente:
 ``` python
@@ -220,10 +220,10 @@ Testando de novo:
 ...
 ```
 
-Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem grande e bem conectado: muitos links dele para ele mesmo.
-No entanto, agora nosso crawler logo começou a acessar outros sites.
-Se você é um Google da vida, percorrer a web inteira é exatamente o que você quer, mas em geral quando criamos crawlers estamos apenas interessados em um site ou mesmo só um subconjunto dele.
-Para resolver isso vamos criar uma função que decide se um link deve ser seguido ou não, e nesse caso vamos considerar que devemos seguir um link apenas quando este for do mesmo domínio da URL inicial:
+Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem conectado: muitos links dele para ele mesmo.
+Já esse site por não ser tão conectado fez o crawler começar logo a acessar outros sites.
+Se você é um Google da vida, percorrer a web inteira é exatamente o que você quer, mas em geral quando criamos crawlers estamos apenas interessados em um site ou só um subconjunto dele.
+Para resolver, vamos criar uma função que decide se um link deve ser seguido ou não, e nesse caso vamos considerar que devemos seguir um link apenas quando este for do mesmo domínio da URL inicial:
 
 ``` python
 from urllib.parse import urlparse
@@ -241,9 +241,9 @@ for link in get_links(url, content):
         queue.put((depth + 1, link))
 ```
 
-Além disso, mesmo com a checagem, estamos visitando algumas páginas mais de uma vez.
-Isso porque até a página ser visitada, podemos já ter adicionado ela na fila várias vezes.
-Para evitar esse problema, poderíamos verificar se a URL já não está enfileirada, mas estruturas de filas em geral não são muito eficientes para testes de pertinência (checar se um elemento já está presente). Pra resolver então fazemos a checagem logo antes de visitar a URL e, para não encher a fila desnecessariamente, antes de enfileirar a URL:
+Ainda assim falta resolver mais um problema. Mesmo com a checagem, estamos visitando algumas páginas mais de uma vez.
+Isso ocorre porque uma página já pode ter sido enfileirada várias vezes antes de ser visitada.
+Uma solução possível seria verificar se a URL já não foi enfileirada, mas estruturas de filas em geral não são muito eficientes para testes de pertinência (checar se um elemento já está presente). Pra resolver então fazemos a checagem logo antes de visitar a URL e, para não encher a fila desnecessariamente, antes de enfileirar a URL:
 
 ``` python
 while not queue.empty():
@@ -251,7 +251,6 @@ while not queue.empty():
     if url not in visited:
         visited.add(url)
 ```
-
 
 Testando de novo agora, parece que está tudo ok!
 
@@ -265,6 +264,9 @@ Testando de novo agora, parece que está tudo ok!
 ```
 
 
+### Conclusão
+
+
 ### Arquivo final:
 
 ``` python
@@ -273,8 +275,8 @@ from queue import Queue
 from typing import List
 from urllib.parse import urljoin, urlparse
 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 
 
 def fetch(url: str) -> str:
