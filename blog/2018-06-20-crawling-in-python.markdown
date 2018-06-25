@@ -18,7 +18,7 @@ Note que essencialmente um crawler é simples: possui apenas um _loop_ e algumas
 
 Para uma primeira versão, vamos implementar o mínimo necessário para um crawler funcionar e não nos preocupar muito com qualquer problema que possa surgir.
 
-Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links. O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, algumas que até já vem embutidas na própria biblioteca padrão da linguagem; pessoalmente, acho que as mais simples são a [Requests]() para lidar com a camada HTTP e [BeautifulSoup]() mais [lxml]() para trabalhar com o conteúdo HTML da página.
+Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links. O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, algumas que até já vem embutidas na própria biblioteca padrão da linguagem; pessoalmente, acho que as mais simples são a [Requests]() para lidar com a camada HTTP e [BeautifulSoup]() para trabalhar com o conteúdo HTML da página.
 
 
 Primeiro, vamos criar uma função para que visita uma URL e retorna seu conteúdo, sem se preocupar por enquanto com erros que possam acontecer no meio do caminho:
@@ -47,8 +47,8 @@ def get_links(content: str) -> List[str]:
     Busca todas as tags <a> em content que possuam a propriedade href,
     e então retorna os hrefs em uma lista.
     """
-    return [a['href']
-            for a in BeautifulSoup(content, 'lxml').find_all('a', href=True)]
+    parser = BeautifulSoup(content, 'html.parser')
+    return [a['href'] for a in parser.find_all('a', href=True)]
 ```
 
 Agora a função que de fato faz a lógica toda. Ela deve receber uma URL inicial e executar o fluxograma acima.
@@ -182,8 +182,8 @@ def get_links(url: str, content: str) -> List[str]:
     normaliza os hrefs para serem URLs absolutas baseadas na URL dada
     e então retorna os links em uma lista.
     """
-    return [urljoin(url, a['href'])
-            for a in BeautifulSoup(content, 'lxml').find_all('a', href=True)]
+    parser = BeautifulSoup(content, 'html.parser')
+    return [urljoin(url, a['href']) for a in parser.find_all('a', href=True)]
 ```
 
 Não podemos esquecer de trocar a chamada em `crawl()` para passar a URL atual:
@@ -267,6 +267,8 @@ Testando de novo agora, parece que está tudo ok!
 ### Conclusão
 
 
+
+
 ### Arquivo final:
 
 ``` python
@@ -292,8 +294,8 @@ def get_links(url: str, content: str) -> List[str]:
     normaliza os hrefs para serem URLs absolutas baseadas na URL dada
     e então retorna os links em uma lista.
     """
-    return [urljoin(url, a['href'])
-            for a in BeautifulSoup(content, 'lxml').find_all('a', href=True)]
+    parser = BeautifulSoup(content, 'html.parser')
+    return [urljoin(url, a['href']) for a in parser.find_all('a', href=True)]
 
 
 def should_visit(seed: str, link: str) -> bool:
