@@ -4,9 +4,14 @@ title: Criando um framework para crawler distribuido em python - Parte 1
 
 ### Introdução
 
+Um tempo atrás um colega de faculdade veio me pedir ajuda com o TCC dele. Ele queria analisar a divulgação de astronomia nos principais portais de notícias do Brasil e para isso eu sugeri que ele fizesse um crawler. Explicando para ele o que é e como funciona um crawler e lembrando dos meus tempos quando trabalhei com isso na [Sieve](https://sieve.com.br/), achei que valeria a pena falar sobre esse assunto aqui. Na verdade, esse é o primeiro de uma série de posts sobre crawlers que farei aqui.
+
+
+#### Mas afinal, o que é um crawler??
+
 Um _crawler_ é um programa que é capaz de navegar páginas web recursivamente.
 Ou seja, dadas uma ou mais URLs iniciais, ele visita a página, extrai os links na página, visita esses links e assim por diante até não ter mais o que visitar ou atingir alguma condição definida pelo usuário.
-Cralwers são usados principalmente para [replicar sites](https://en.wikipedia.org/wiki/Mirror_website), indexar a web (e.g. Google) ou extrair informações relevantes de sites, também chamado de [web scraping](https://pt.wikipedia.org/wiki/Coleta_de_dados_web).
+Crawlers são usados principalmente para [replicar sites](https://en.wikipedia.org/wiki/Mirror_website), indexar a web (e.g. Google) ou extrair informações relevantes de sites, também chamado de [web scraping](https://pt.wikipedia.org/wiki/Coleta_de_dados_web).
 
 A lógica de um crawler pode ser resumida no diagrama abaixo:
 
@@ -16,11 +21,11 @@ Note que essencialmente um crawler é simples: possui apenas um _loop_ e algumas
 
 ### Web 101
 
-Pra implementar um crawler é preciso primeiro saber como funciona a web. Se você já sabe, pode pular essa seção; se não, essa introdução vai ser importante para entender as próximas.
+Pra implementar um crawler é preciso primeiro saber como funciona a web. Se você já sabe, pode [pular essa seção](#start); se não, essa introdução vai ser importante para entender as próximas.
 
 #### HTTP - Hypertext Transfer Protocol
 
-HTTP é um dos protocolos usado na web, e ele define basicamente como que um _user agent_ (geralmente um browser) e um servidor se comunicam. Nele, o _user agent_ inicia a comunicação fazendo ao servidor uma requisição que contém até 4 partes:
+HTTP é um dos protocolos usados na web, e ele define basicamente como que um _user agent_ (geralmente um browser tipo o Chrome ou o Firefox) e um servidor se comunicam. Nele, o _user agent_ inicia a comunicação fazendo ao servidor uma requisição que contém até 4 partes:
 
 - Um **caminho** (ou _path_), que define qual o recurso deve ser acessado. Geralmente se parece com `/blog/2018-06-20-crawling-in-python.html`.
 - Um **método**, que define o que deve ser feito com o recurso. Os mais comuns são `GET`, que apenas requisita o recurso e `POST`, que é uma das formas de enviar informações para o servidor, muito usado em formulários de cadastro, login etc. No nosso caso, como queremos apenas coletar as páginas, vamos usar somento o `GET`.
@@ -38,10 +43,10 @@ Recebendo a requisição, o servidor gera uma resposta que contém:
 - O **corpo** da resposta. No nosso caso, esse corpo será em geral um conteúdo HTML.
 
 
-### HTML
+#### HTML
 
 
-### Versão 1: Um processo, uma thread, síncrono e ingênuo.
+### Versão 1: Um processo, uma thread, síncrono e ingênuo.  {#start}
 
 Para uma primeira versão, vamos implementar o mínimo necessário para um crawler funcionar e não nos preocupar muito com qualquer problema que possa surgir.
 
