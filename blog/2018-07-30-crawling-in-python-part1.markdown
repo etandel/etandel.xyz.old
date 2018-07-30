@@ -33,7 +33,7 @@ Pra implementar um crawler é preciso primeiro saber como funciona a web. Se voc
 
 HTTP é um dos protocolos usados na web, e ele define basicamente como que um _user agent_ (geralmente um browser tipo o Chrome ou o Firefox) e um servidor se comunicam. Nele, o _user agent_ inicia a comunicação fazendo ao servidor uma requisição que contém até 4 partes:
 
-- Um **caminho** (ou _path_), que define qual o recurso deve ser acessado. Geralmente se parece com `/blog/2018-07-31-crawling-in-python-part1.html`.
+- Um **caminho** (ou _path_), que define qual o recurso deve ser acessado. Geralmente se parece com `/blog/2018-07-30-crawling-in-python-part1.html`.
 - Um **método**, que define o que deve ser feito com o recurso. Os mais comuns são `GET`, que apenas requisita o recurso e `POST`, que é uma das formas de enviar informações para o servidor, muito usado em formulários de cadastro, login etc. No nosso caso, como queremos apenas coletar as páginas, vamos usar somente o `GET`.
 - Possivelmente um **corpo**, que contém as informações que estão sendo enviadas ao servidor (e.g. dados de cadastro, cartão de crédito, login etc. a depender da aplicação), se houver.
 - Vários **cabeçalhos** (ou _headers_), que são uma série de metadados que definem como o servidor deve processar a requisição: quais os formatos aceitos, que tipo de compressão deve ser usada, qual o "nome" do _user agent_ entre outras.
