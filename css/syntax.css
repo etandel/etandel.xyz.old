@@ -44,6 +44,7 @@ td.sourceCode { padding-left: 5px; }
 /* RegionMarkerTok */
 .sourceCode span.re { }
 /* SpecialCharTok */
+.sourceCode span.sc { color: #06287e; }
 /* SpecialStringTok */
 .sourceCode span.ss { color: #4070a0; }
 /* StringTok */
