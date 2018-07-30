@@ -43,6 +43,10 @@ server {
         return 301 https://$host/blog/$1;
     }
 
+    location ~ ^/blog/?$ {
+        return 301 https://$host/blog.html;
+    }
+
    # tioeliastanoov
     location = /tioelias { rewrite ^ /tioelias/; }
     location /tioelias { try_files $uri @tioelias; }
