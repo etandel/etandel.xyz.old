@@ -76,9 +76,9 @@ Para uma primeira versão, vamos implementar o mínimo necessário para um crawl
 
 Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links.
 O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, sendo que algumas já até vem embutidas na própria biblioteca padrão da linguagem, como os módulos [`urllib`](https://docs.python.org/3/library/urllib.html) e [`html.parser`](https://docs.python.org/3/library/html.parser.html#module-html.parser).
-A escolha do que usar é subjetiva, mas eu acho que, mesmo não sendo embutidas na linguagem e portanto precisarem ser [instaladas](http://blog.dunderlabs.com/criando-seu-ambiente-para-desenvolvimento-web-com-django.html), as mais simples de são a [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e a [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
+A escolha do que usar é subjetiva, mas eu acho que, mesmo não sendo embutidas na linguagem e portanto precisarem ser [instaladas](http://blog.dunderlabs.com/criando-seu-ambiente-para-desenvolvimento-web-com-django.html), as mais simples são a [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e a [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
 
-Primeiro, vamos criar uma função para que visita uma URL e retorna seu conteúdo, sem nenhum tratamento de erro:
+Primeiro, vamos criar uma função que visita uma URL e retorna seu conteúdo, sem nenhum tratamento de erro:
 
 ``` python
 import requests
