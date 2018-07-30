@@ -86,6 +86,8 @@ article .header {
   }
 }
 
+img { max-width: 100%; }
+
 @media (min-width: 320px) {
   body {
     width: 90%;
