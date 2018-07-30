@@ -1,5 +1,11 @@
 --------
-title: Criando um framework para crawler distribuido em python - Parte 1
+title: Como fazer um crawler em Python - Parte 1
+
+header-includes: |
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@etandel" />
+    <meta name="twitter:title" content="Como fazer um crawler em Python - Parte 1" />
+    <meta name="twitter:description" content="Um tempo atrás um colega de faculdade veio me pedir ajuda com ..." />
 --------
 
 ### Introdução
