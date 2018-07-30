@@ -17,7 +17,7 @@ A lógica de um crawler pode ser resumida no diagrama abaixo:
 
 ![](/images/crawler-flowchart.svg)
 
-Note que essencialmente um crawler é simples: possui apenas um _loop_ e algumas condições de parada. No entanto, são tantos os problemas que podem ocorrer em qualquer uma dessas etapas que criar e manter um crawler robusto e rápido não é nem um pouco trivial. Por isso, apesar de existirem diversas ferramentas no mercado que abstraem essa tarefa - e para produção você provavelmente deveria usar uma delas em vez de criar outra do zero -, esse artigo visa explicar o passo-a-passo de criar um crawler em Python, iniciando com uma implementação mais ingênua e evoluindo ela para ganhar performance e lidar melhor com dificuldades comuns.
+Note que essencialmente um crawler é simples: possui apenas um _loop_ e algumas condições de parada. No entanto, são tantos os problemas que podem ocorrer em qualquer uma dessas etapas que criar e manter um crawler robusto e rápido não é nem um pouco trivial. Por isso, apesar de existirem diversas ferramentas no mercado que abstraem essa tarefa - e para produção você provavelmente deveria usar uma delas em vez de criar outra do zero -, essa série visa explicar o passo-a-passo de criar um crawler em Python, iniciando com uma implementação mais ingênua e evoluindo ela para ganhar performance e lidar melhor com dificuldades comuns.
 
 ### Web 101
 
@@ -30,7 +30,7 @@ HTTP é um dos protocolos usados na web, e ele define basicamente como que um _u
 - Um **caminho** (ou _path_), que define qual o recurso deve ser acessado. Geralmente se parece com `/blog/2018-06-20-crawling-in-python.html`.
 - Um **método**, que define o que deve ser feito com o recurso. Os mais comuns são `GET`, que apenas requisita o recurso e `POST`, que é uma das formas de enviar informações para o servidor, muito usado em formulários de cadastro, login etc. No nosso caso, como queremos apenas coletar as páginas, vamos usar somente o `GET`.
 - Possivelmente um **corpo**, que contém as informações que estão sendo enviadas ao servidor (e.g. dados de cadastro, cartão de crédito, login etc. a depender da aplicação), se houver.
-- Vários **cabeçalhos** (ou _headers_), que são uma série de metadados que definem como o servidor deve processar a requisição: quais os formatos aceitos, que tipo de compressão deve ser usada, qual o "nome" do _user agent_ etc.
+- Vários **cabeçalhos** (ou _headers_), que são uma série de metadados que definem como o servidor deve processar a requisição: quais os formatos aceitos, que tipo de compressão deve ser usada, qual o "nome" do _user agent_ entre outras.
 
 Recebendo a requisição, o servidor gera uma resposta que contém:
 
@@ -45,7 +45,8 @@ Recebendo a requisição, o servidor gera uma resposta que contém:
 
 #### HTML
 
-[HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML) é a linguagem usada para se estruturar o conteúdo de uma página para um _browser_ poder carregá-la. Nela, a informação é estruturada por _tags_, que não só indicam qual a função daquele conteúdo mas que também podem ter propriedades que definem o comportamento e até o estilo (core, tamanho etc.) dele. Aqui um exemplo de um HTML simples:
+[HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML) é a linguagem usada para se estruturar o conteúdo de uma página para um _browser_ poder carregá-la.
+Nela, a informação é organizada em _tags_, que não só indicam qual a função daquele conteúdo mas também guardam propriedades que definem o comportamento e até o estilo (cor, tamanho etc.) dele. Um exemplo de um HTML simples:
 
 ``` html
 <html>
@@ -60,7 +61,7 @@ Recebendo a requisição, o servidor gera uma resposta que contém:
 </html>
 ```
 
-Existem **várias** tags diferentes, mas por enquanto vamos apenas nos preocupar com a que define links: `<a>`.
+Existem **várias** tags diferentes, mas por enquanto fica só o destaque para a que define links: `<a>`.
 
 
 ### Versão 1: Um processo, uma thread, síncrono e ingênuo.  {#start}
@@ -69,7 +70,7 @@ Para uma primeira versão, vamos implementar o mínimo necessário para um crawl
 
 Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links.
 O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, sendo que algumas já até vem embutidas na própria biblioteca padrão da linguagem, como os módulos [`urllib`](https://docs.python.org/3/library/urllib.html) e [`html.parser`](https://docs.python.org/3/library/html.parser.html#module-html.parser).
-A escolha do que usar é subjetiva, mas eu acho que, mesmo não sendo embutidas na linguagem e portanto precisarem ser [instaladas](), as mais simples de usar são a [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e a [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
+A escolha do que usar é subjetiva, mas eu acho que, mesmo não sendo embutidas na linguagem e portanto precisarem ser [instaladas](http://blog.dunderlabs.com/criando-seu-ambiente-para-desenvolvimento-web-com-django.html), as mais simples de são a [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e a [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
 
 Primeiro, vamos criar uma função para que visita uma URL e retorna seu conteúdo, sem nenhum tratamento de erro:
 
@@ -185,7 +186,7 @@ Vamos testar no G1:
 ...
 ```
 
-Eu parei o processamento logo no começo, porque o site do G1 é bem grande, mas parece que está funcionando direitinho, extraindo os links, calculando a profundidade etc.
+Eu parei o processamento logo no começo, porque o site do G1 é bem grande, mas parece que está funcionando direitinho: extraindo os links, calculando a profundidade etc.
 Aliás, note como alguns links usam HTTP, enquanto outros HTTPS. Isso é um comportamento bem ruim do G1, pois hoje em dia [não tem mais desculpa](https://letsencrypt.org/) [para não usar HTTPS](https://stormpath.com/blog/why-http-is-sometimes-better-than-https).
 Mas como muitos sites não se comportam direito, você como usuário pode se proteger disso usando a extensão [HTTPS Everywhere](https://www.eff.org/https-everywhere), da Electronic Frontier Foundation, que quando possível força seu browser a usar HTTPS mesmo que o link do site esteja errado.
 
@@ -201,7 +202,7 @@ requests.exceptions.MissingSchema: Invalid URL './': No schema supplied. Perhaps
 
 Ooops. Parece que o crawler tentou acessar a URL `./`, o que fez dar um erro na Requests. Isso aconteceu porque os links nesse site são caminhos relativos entre as páginas. Isto é, em vez de URLs completas como `https://etandel.xyz/blog/`, os links são na forma `./blog/`, que significa "acesse o caminho `blog/` a partir da página atual". Esse tipo de link é muito comum em sites estáticos como esse aqui, onde em geral uma URL corresponde diretamente a um arquivo no servidor.
 
-Para resolver isso, vamos ter que alterar nossa função `get_links()` para normalizar a URL extraída com base na URL atual. Por sorte o Python já vem com uma função que resolve isso pra gente:
+Para resolver isso, vamos ter que alterar nossa função `get_links()` para normalizar a URL extraída com base na atual. Por sorte o Python já vem com uma função que resolve isso pra gente:
 
 ``` python
 In [1]: from urllib.parse import urljoin
@@ -291,7 +292,7 @@ for link in get_links(url, content):
 
 Ainda assim falta resolver mais um problema. Mesmo com a checagem, estamos visitando algumas páginas mais de uma vez.
 Isso ocorre porque uma página já pode ter sido enfileirada várias vezes antes de ser visitada.
-Uma solução possível seria verificar se a URL já não foi enfileirada, mas estruturas de filas em geral não são muito eficientes para testes de pertinência (checar se um elemento já está presente). Pra resolver então fazemos a checagem logo antes de visitar a URL e, para não encher a fila desnecessariamente, antes de enfileirar a URL:
+Uma solução possível seria verificar se a URL já não foi enfileirada, mas estruturas de fila em geral não são muito eficientes para testes de pertinência (checar se um elemento já está presente). Pra resolver então fazemos a checagem logo antes de visitar a URL e, para não encher a fila desnecessariamente, antes de enfileirar a URL:
 
 ``` python
 while not queue.empty():
@@ -312,7 +313,7 @@ Testando de novo agora, parece que está tudo ok!
 
 ### Conclusão
 
-Crawlers são sistemas conceitualmente simples, mas na prática bem complicados devido à quantidade de coisas que podem dar problema durante o processamento. Nesse post vimos não só o básico de como implementar um sistema desse tipo, mas também como lidar com alguns problemas típicos como HTMLs quebrados, URLs relativas e erros comuns de lógica que podem adicionar comportamentos ruins ao sistema.
+Crawlers são sistemas conceitualmente simples, mas na prática bem complicados devido à quantidade de coisas que podem dar errado em cada etapa do processo. Nesse post vimos não só o básico de como implementar um sistema desse tipo, mas também como lidar com alguns problemas típicos como HTMLs quebrados, URLs relativas e erros comuns de lógica que podem adicionar comportamentos ruins ao sistema.
 
 No próximo post veremos como melhorar a performance e lidar com os erros de rede e protocolo que podem surgir.
 
