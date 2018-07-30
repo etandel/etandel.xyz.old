@@ -45,16 +45,33 @@ Recebendo a requisição, o servidor gera uma resposta que contém:
 
 #### HTML
 
+[HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML) é a linguagem usada para se estruturar o conteúdo de uma página para um _browser_ poder carregá-la. Nela, a informação é estruturada por _tags_, que não só indicam qual a função daquele conteúdo mas que também podem ter propriedades que definem o comportamento e até o estilo (core, tamanho etc.) dele. Aqui um exemplo de um HTML simples:
+
+``` html
+<html>
+<head>
+    <title>Título da página</title>
+</head>
+
+<body>
+    <h1>Está é a página</h1>
+    <a href="https://etandel.xyz">Clique aqui para visitar o site etandel.xyz.</a>
+</body>
+</html>
+```
+
+Existem **várias** tags diferentes, mas por enquanto vamos apenas nos preocupar com a que define links: `<a>`.
+
 
 ### Versão 1: Um processo, uma thread, síncrono e ingênuo.  {#start}
 
 Para uma primeira versão, vamos implementar o mínimo necessário para um crawler funcionar e não nos preocupar muito com qualquer problema que possa surgir.
 
 Antes de começar, precisamos resolver como é que o crawler vai visitar uma página e extrair seus links.
-O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, algumas que até já vem embutidas na própria biblioteca padrão da linguagem, como os módulos [`urllib`](https://docs.python.org/3/library/urllib.html) e [`html.parser`](https://docs.python.org/3/library/html.parser.html#module-html.parser).
-Essa é uma escolha subjetiva, mas eu acho que as mais simples de usar são [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
+O ecossistema do Python possui muitas bibliotecas que podem ajudar nisso, sendo que algumas já até vem embutidas na própria biblioteca padrão da linguagem, como os módulos [`urllib`](https://docs.python.org/3/library/urllib.html) e [`html.parser`](https://docs.python.org/3/library/html.parser.html#module-html.parser).
+A escolha do que usar é subjetiva, mas eu acho que, mesmo não sendo embutidas na linguagem e portanto precisarem ser [instaladas](), as mais simples de usar são a [Requests](http://docs.python-requests.org/en/master/) para lidar com a camada HTTP e a [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) para trabalhar com o conteúdo HTML da página.
 
-Primeiro, vamos criar uma função para que visita uma URL e retorna seu conteúdo, sem se preocupar por enquanto com erros que possam acontecer no meio do caminho:
+Primeiro, vamos criar uma função para que visita uma URL e retorna seu conteúdo, sem nenhum tratamento de erro:
 
 ``` python
 import requests
@@ -204,7 +221,7 @@ In [6]: urljoin('https://site.com/p1/', 'http://outrosite.com/p2')
 Out[6]: 'http://outrosite.com/p2'
 ```
 
-Melhorando nossa extração de links:
+Melhorando então nossa extração de links:
 
 ``` python
 def get_links(url: str, content: str) -> List[str]:
@@ -250,8 +267,8 @@ Testando de novo:
 ...
 ```
 
-Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem conectado: muitos links dele para ele mesmo.
-Já esse site por não ser tão conectado fez o crawler começar logo a acessar outros sites.
+Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem conec.tado: muitos links dele para ele mesmo.
+Já esse site, por não ser tão conectado, fez o crawler começar logo a acessar links externos.
 Se você é um Google da vida, percorrer a web inteira é exatamente o que você quer, mas em geral quando criamos crawlers estamos apenas interessados em um site ou só um subconjunto dele.
 Para resolver, vamos criar uma função que decide se um link deve ser seguido ou não, e nesse caso vamos considerar que devemos seguir um link apenas quando este for do mesmo domínio da URL inicial:
 
