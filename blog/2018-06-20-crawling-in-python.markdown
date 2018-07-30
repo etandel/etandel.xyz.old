@@ -7,7 +7,7 @@ title: Criando um framework para crawler distribuido em python - Parte 1
 Um tempo atrás um colega de faculdade veio me pedir ajuda com o TCC dele. Ele queria analisar a divulgação de astronomia nos principais portais de notícias do Brasil e para isso eu sugeri que ele fizesse um crawler. Explicando para ele o que é e como funciona um crawler e lembrando dos meus tempos quando trabalhei com isso na [Sieve](https://sieve.com.br/), achei que valeria a pena falar sobre esse assunto aqui. Na verdade, esse é o primeiro de uma série de posts sobre crawlers que farei aqui.
 
 
-#### Mas afinal, o que é um crawler??
+#### Mas afinal, o que é um crawler?
 
 Um _crawler_ é um programa que é capaz de navegar páginas web recursivamente.
 Ou seja, dadas uma ou mais URLs iniciais, ele visita a página, extrai os links na página, visita esses links e assim por diante até não ter mais o que visitar ou atingir alguma condição definida pelo usuário.
@@ -28,7 +28,7 @@ Pra implementar um crawler é preciso primeiro saber como funciona a web. Se voc
 HTTP é um dos protocolos usados na web, e ele define basicamente como que um _user agent_ (geralmente um browser tipo o Chrome ou o Firefox) e um servidor se comunicam. Nele, o _user agent_ inicia a comunicação fazendo ao servidor uma requisição que contém até 4 partes:
 
 - Um **caminho** (ou _path_), que define qual o recurso deve ser acessado. Geralmente se parece com `/blog/2018-06-20-crawling-in-python.html`.
-- Um **método**, que define o que deve ser feito com o recurso. Os mais comuns são `GET`, que apenas requisita o recurso e `POST`, que é uma das formas de enviar informações para o servidor, muito usado em formulários de cadastro, login etc. No nosso caso, como queremos apenas coletar as páginas, vamos usar somento o `GET`.
+- Um **método**, que define o que deve ser feito com o recurso. Os mais comuns são `GET`, que apenas requisita o recurso e `POST`, que é uma das formas de enviar informações para o servidor, muito usado em formulários de cadastro, login etc. No nosso caso, como queremos apenas coletar as páginas, vamos usar somente o `GET`.
 - Possivelmente um **corpo**, que contém as informações que estão sendo enviadas ao servidor (e.g. dados de cadastro, cartão de crédito, login etc. a depender da aplicação), se houver.
 - Vários **cabeçalhos** (ou _headers_), que são uma série de metadados que definem como o servidor deve processar a requisição: quais os formatos aceitos, que tipo de compressão deve ser usada, qual o "nome" do _user agent_ etc.
 
@@ -94,8 +94,8 @@ from bs4 import BeautifulSoup
 
 def get_links(content: str) -> List[str]:
     """
-    Busca todas as tags <a> em content que possuam a propriedade href,
-    e então retorna os hrefs em uma lista.
+    Busca todas as tags <a> em content que possuam a propriedade
+    href, e então retorna os hrefs em uma lista.
     """
     parser = BeautifulSoup(content, 'html.parser')
     return [a['href'] for a in parser.find_all('a', href=True)]
@@ -128,7 +128,8 @@ def crawl(seed: str, max_depth: int=3):
         # faz alguma coisa com o conteúdo
         process_page(depth, url, content)
 
-        # se a profundidade atual já for máxima, nem pegamos os próximos links
+        # se a profundidade atual já for máxima,
+        # nem pegamos os próximos links
         # se não, adicionamos cada link na fila,
         # lembrando de incrementar a profundidade
         if depth < max_depth:
@@ -226,9 +227,9 @@ Melhorando então nossa extração de links:
 ``` python
 def get_links(url: str, content: str) -> List[str]:
     """
-    Busca todas as tags <a> em content que possuam a propriedade href,
-    normaliza os hrefs para serem URLs absolutas baseadas na URL dada
-    e então retorna os links em uma lista.
+    Busca todas as tags <a> em content que possuam a propriedade
+    href, normaliza os hrefs para serem URLs absolutas baseadas
+    na URL dada e então retorna os links em uma lista.
     """
     parser = BeautifulSoup(content, 'html.parser')
     return [urljoin(url, a['href']) for a in parser.find_all('a', href=True)]
@@ -267,7 +268,7 @@ Testando de novo:
 ...
 ```
 
-Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem conec.tado: muitos links dele para ele mesmo.
+Quando testamos com o G1, todas as URLs que apareceram eram do mesmo domínio, porque o G1 é um site bem conectado: muitos links dele para ele mesmo.
 Já esse site, por não ser tão conectado, fez o crawler começar logo a acessar links externos.
 Se você é um Google da vida, percorrer a web inteira é exatamente o que você quer, mas em geral quando criamos crawlers estamos apenas interessados em um site ou só um subconjunto dele.
 Para resolver, vamos criar uma função que decide se um link deve ser seguido ou não, e nesse caso vamos considerar que devemos seguir um link apenas quando este for do mesmo domínio da URL inicial:
@@ -306,7 +307,6 @@ Testando de novo agora, parece que está tudo ok!
 0 - https://etandel.xyz/
 1 - https://etandel.xyz/contact.html
 1 - https://etandel.xyz/blog.html
-2 - https://etandel.xyz/blog.html
 2 - https://etandel.xyz/blog/2018-06-10-protecting_postgresql_from_delete.html
 ```
 
@@ -314,7 +314,7 @@ Testando de novo agora, parece que está tudo ok!
 
 Crawlers são sistemas conceitualmente simples, mas na prática bem complicados devido à quantidade de coisas que podem dar problema durante o processamento. Nesse post vimos não só o básico de como implementar um sistema desse tipo, mas também como lidar com alguns problemas típicos como HTMLs quebrados, URLs relativas e erros comuns de lógica que podem adicionar comportamentos ruins ao sistema.
 
-No próximo post veremos como melhor a performance e lidar com os erros de rede e protocolo que podem surgir.
+No próximo post veremos como melhorar a performance e lidar com os erros de rede e protocolo que podem surgir.
 
 ### Arquivo completo:
 
@@ -337,9 +337,9 @@ def fetch(url: str) -> str:
 
 def get_links(url: str, content: str) -> List[str]:
     """
-    Busca todas as tags <a> em content que possuam a propriedade href,
-    normaliza os hrefs para serem URLs absolutas baseadas na URL dada
-    e então retorna os links em uma lista.
+    Busca todas as tags <a> em content que possuam a propriedade
+    href, normaliza os hrefs para serem URLs absolutas baseadas
+    na URL dada e então retorna os links em uma lista.
     """
     parser = BeautifulSoup(content, 'html.parser')
     return [urljoin(url, a['href']) for a in parser.find_all('a', href=True)]
@@ -372,7 +372,8 @@ def crawl(seed: str, max_depth: int=3):
             # faz alguma coisa com o conteúdo
             process_page(depth, url, content)
 
-            # se a profundidade atual já for máxima, nem pegamos os links
+            # se a profundidade atual já for máxima,
+            # nem pegamos os links
             # se não, adicionamos cada link na fila,
             # lembrando de incrementar a profundidade
             if depth < max_depth:
