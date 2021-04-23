@@ -34,6 +34,7 @@ server {
     ssl_dhparam /etc/nginx/dhparams.pem;
 
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+    add_header Permissions-Policy interest-cohort=();
 
 	location / {
 		try_files $uri $uri/ =404;
@@ -46,13 +47,4 @@ server {
     location ~ ^/blog/?$ {
         return 301 https://$host/blog.html;
     }
-
-   # tioeliastanoov
-    location = /tioelias { rewrite ^ /tioelias/; }
-    location /tioelias { try_files $uri @tioelias; }
-    location @tioelias {
-      include uwsgi_params;
-      uwsgi_pass unix:/tmp/tioelias.sock;
-    }
-
 }
